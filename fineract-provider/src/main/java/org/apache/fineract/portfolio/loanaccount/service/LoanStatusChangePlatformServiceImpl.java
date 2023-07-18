@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.fineract.infrastructure.event.business.BusinessEventListener;
 import org.apache.fineract.infrastructure.event.business.domain.loan.LoanStatusChangedBusinessEvent;
 import org.apache.fineract.infrastructure.event.business.service.BusinessEventNotifierService;
+import org.apache.fineract.investor.service.LoanAccountOwnerTransferService;
 import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanAccountDomainServiceJpa;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,8 @@ public class LoanStatusChangePlatformServiceImpl implements LoanStatusChangePlat
 
     private final BusinessEventNotifierService businessEventNotifierService;
     private final LoanAccountDomainServiceJpa loanAccountDomainService;
+
+    private final LoanAccountOwnerTransferService loanAccountOwnerTransferService;
 
     @PostConstruct
     public void addListeners() {
@@ -53,6 +56,10 @@ public class LoanStatusChangePlatformServiceImpl implements LoanStatusChangePlat
             }
             if (loan.isOpen()) {
                 loan.handleMaturityDateActivate();
+            }
+
+            if (loan.isClosed() || loan.getStatus().isOverpaid()) {
+                loanAccountOwnerTransferService.handleLoanClosedOrOverpaid(loan);
             }
         }
     }

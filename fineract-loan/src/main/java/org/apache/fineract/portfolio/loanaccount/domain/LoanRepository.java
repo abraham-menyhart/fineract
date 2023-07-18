@@ -81,6 +81,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long>, JpaSpecificat
     String FIND_BY_ACCOUNT_NUMBER = "select loan from Loan loan where loan.accountNumber = :accountNumber";
 
     String FIND_LOAN_ID_AND_EXTERNAL_ID_AND_STATUS = "select new org.apache.fineract.cob.data.LoanIdAndExternalIdAndStatus(loan.id, loan.externalId, loan.loanStatus) from Loan loan where loan.id = :loanId";
+    String FIND_LOAN_STATUS = "select loan.loanStatus from Loan loan where loan.id = :loanId";
 
     String EXISTS_NON_CLOSED_BY_EXTERNAL_LOAN_ID = "select case when (count (loan) > 0) then 'true' else 'false' end from Loan loan where loan.externalId = :externalLoanId and loan.loanStatus in (100,200,300,303,304)";
 
@@ -192,6 +193,9 @@ public interface LoanRepository extends JpaRepository<Loan, Long>, JpaSpecificat
 
     @Query(FIND_LOAN_ID_AND_EXTERNAL_ID_AND_STATUS)
     Optional<LoanIdAndExternalIdAndStatus> findLoanIdAndExternalIdAndStatusByLoanId(@Param("loanId") Long loanId);
+
+    @Query(FIND_LOAN_STATUS)
+    Optional<Integer> findLoanStatusByLoanId(@Param("loanId") Long loanId);
 
     @Query(EXISTS_NON_CLOSED_BY_EXTERNAL_LOAN_ID)
     boolean existsNonClosedLoanByExternalLoanId(@Param("externalLoanId") ExternalId externalLoanId);

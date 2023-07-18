@@ -18,14 +18,18 @@
  */
 package org.apache.fineract.investor.service;
 
-import org.apache.fineract.infrastructure.core.api.JsonCommand;
-import org.apache.fineract.infrastructure.core.data.CommandProcessingResult;
+import java.time.LocalDate;
+import java.util.List;
+import org.apache.fineract.investor.domain.ExternalAssetOwnerTransfer;
+import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 
-public interface ExternalAssetOwnersWriteService {
+public interface LoanAccountOwnerTransferService {
 
-    CommandProcessingResult saleLoanByLoanId(JsonCommand command);
+    void handleBuyback(final Loan loan, final LocalDate settlementDate, final ExternalAssetOwnerTransfer buybackExternalAssetOwnerTransfer);
 
-    CommandProcessingResult buybackLoanByLoanId(JsonCommand command);
+    void handleSale(final Loan loan, final LocalDate settlementDate, final ExternalAssetOwnerTransfer externalAssetOwnerTransfer);
 
-    CommandProcessingResult cancelTransactionById(JsonCommand command);
+    void handleSameDaySaleAndBuyback(final LocalDate settlementDate, final List<ExternalAssetOwnerTransfer> transferDataList, Loan loan);
+
+    void handleLoanClosedOrOverpaid(Loan loan);
 }
